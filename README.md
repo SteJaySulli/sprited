@@ -1,0 +1,2 @@
+# sprited
+Simple Sprite Editor
