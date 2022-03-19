@@ -1,0 +1,175 @@
+$min-tool-box-width: 200px;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  user-select: none;
+  background-color: #CECECE;
+  &.dragging-vertical {
+    cursor: ns-resize;
+    & * {
+      cursor: ns-resize !important;
+    }
+  }
+  &.dragging-horizontal {
+    cursor: ew-resize;
+    & * {
+      cursor: ew-resize !important;
+    }
+  }
+  .main {
+    height: calc(100% - $min-tool-box-width);
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    .tool-box {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: $min-tool-box-width;
+      background-color: white;
+      .preview {
+        flex: 1;
+        background-size: contain;
+        background-position: 50% 50%;
+        max-height: $min-tool-box-width;
+        min-height: $min-tool-box-width;
+        height: $min-tool-box-width;
+        background-image: linear-gradient(45deg, #808080 25%, transparent 25%),
+          linear-gradient(-45deg, #808080 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #808080 75%),
+          linear-gradient(-45deg, transparent 75%, #808080 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      }
+      .tools {
+        min-height: 100px;
+        max-height: calc(100% - $min-tool-box-width - $min-tool-box-width);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        & > * {
+          margin: 2px 4px;
+        }
+      }
+      .colours {
+        // flex:1;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        overflow-y: auto;
+        box-sizing: border-box;
+        & > div {
+          border: 1px solid black;
+          width: 16px;
+          height: 16px;
+          line-height: 18px;
+          font-size: 8px;
+          text-align: center;
+          font-family: sans-serif;
+          font-weight: bold;
+          & > span {
+            display: none;
+            color: white;
+            text-shadow: 0px 0px black;
+            mix-blend-mode: difference;
+          }
+          &.selected,
+          &:hover {
+            border: 1px solid white;
+            span {
+              display: block;
+            }
+          }
+        }
+        & > div.selectedColour {
+          width: 100%;
+          height: 32px;
+          border: 2px solid white;
+          margin-bottom: 4px;
+          & > span {
+            display: block;
+            color: white;
+            text-shadow: 0px 0px black;
+            mix-blend-mode: difference;
+            font-size: 16px;
+            line-height: 36px;
+          }
+        }
+      }
+      .selects {
+        display: flex;
+        flex-direction: column;
+        min-width: $min-tool-box-width;
+        .select {
+          display: flex;
+          flex-direction: row;
+          justify-content: stretch;
+          margin: 4px;
+          select {
+            flex: 1;
+          }
+          button {
+            width: 28px;
+          }
+        }
+      }
+    }
+    .drawing-area {
+      flex: 1;
+      background-image: linear-gradient(45deg, #808080 25%, transparent 25%),
+        linear-gradient(-45deg, #808080 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #808080 75%),
+        linear-gradient(-45deg, transparent 75%, #808080 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      overflow: scroll;
+    }
+  }
+  .drag-bar {
+    width: 8px;
+    background: linear-gradient(to right, #ccc, #fff, #ddd);
+    cursor: ew-resize;
+  }
+  .drag-bar-vertical {
+    height: 8px;
+    min-height: 8px;
+    background: linear-gradient(to bottom, #ccc, #fff, #ddd);
+    cursor: ns-resize;
+  }
+  .frame-bar {
+    display: flex;
+    flex-direction: row;
+    // min-height: $min-tool-box-width;
+    .frames {
+      flex: 1;
+      overflow-x: scroll;
+      min-height: 100px;
+      .frameset {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        & > div {
+          margin-left: 4px;
+          margin-right: 4px;
+          width: 64px;
+          min-width: 64px;
+          max-width: 64px;
+          height: 64px;
+          min-height: 64px;
+          max-height: 64px;
+          background: black;
+          color: white;
+        }
+      }
+    }
+  }
+}
