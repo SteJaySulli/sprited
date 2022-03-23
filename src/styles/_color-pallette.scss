@@ -1,0 +1,88 @@
+.color-pallette {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  box-sizing: border-box;
+  & > div {
+    border: 2px solid black;
+    width: 16px;
+    height: 16px;
+    line-height: 18px;
+    font-size: 8px;
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+    box-sizing: content-box;
+    & > span {
+      display: none;
+      color: white;
+      text-shadow: 0px 0px black;
+      mix-blend-mode: difference;
+    }
+    &:hover {
+      outline: 1px solid white;
+      span {
+        display: block;
+      }
+    }
+    &.primarySelected {
+      border-left: 2px solid white;
+    }
+    &.secondarySelected {
+      border-right: 2px solid white;
+    }
+  }
+  & > div.selectedColors {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    height: 36px;
+    div.selectedColor {
+      width: 50%;
+      height: 32px;
+      border: 2px solid white;
+      margin-bottom: 4px;
+      & > span {
+        display: block;
+        color: white;
+        text-shadow: 0px 0px black;
+        mix-blend-mode: difference;
+        font-size: 16px;
+        line-height: 36px;
+      }
+    }
+  }
+}
+
+.color-mode-select {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  button {
+    width: 45%;
+    border-width: 1px;
+    padding: 2px;
+    &:disabled {
+      background-color: black;
+      color:white;
+    }
+  }
+}
+
+.color-slider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  div {
+    width: 60px;
+    font-size: 0.7em;
+  }
+  input {
+    flex: 1;
+  }
+}

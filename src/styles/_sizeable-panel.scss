@@ -1,0 +1,50 @@
+.sizeable-panel {
+    display: flex;
+    width: 100%;
+
+    .sizeable-panel-section {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        overflow: hidden;
+        // flex:1;
+    }
+
+    &.sizeable-panel-vertical {
+        width: 100%;
+        flex-direction: column;
+        overflow-y: auto;
+        & > .sizeable-panel-section {
+            flex-direction: column;
+            min-height: 100px;
+            width: 100%;
+            overflow-y: auto;
+        }
+        & > .sizeable-panel-drag-bar {
+            cursor: ns-resize;
+            height: 8px;
+            min-height: 8px;
+            width: 100%;
+            background: linear-gradient(to bottom, #ccc, #fff, #ddd);        
+        }
+    }
+
+    &.sizeable-panel-horizontal {
+        height: 100%;
+        overflow-x: auto;
+        & > .sizeable-panel-section {
+            flex-direction: row;
+            min-width: 100px;
+            height: 100%;
+            overflow-x: auto;
+        }
+        & > .sizeable-panel-drag-bar {
+            cursor: ew-resize;
+            height: 100%;
+            min-width:8px;
+            width: 8px;
+            background: linear-gradient(to right, #ccc, #fff, #ddd);        
+        }
+    }
+
+}
