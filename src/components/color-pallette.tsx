@@ -1,19 +1,6 @@
 import React, { PropsWithoutRef, useState } from "react";
-import { rgbToColorString, colorStringToRgb, changeColorStringHsl, changeColorStringRgb, colorStringToHsl, changeColorStringHsv, hslTohsv, hsvToHsl, colorStringToHsv } from "../utils/colors";
+import { colorStringToRgb, changeColorStringHsl, changeColorStringRgb, colorStringToHsl, changeColorStringHsv, hslTohsv, hsvToHsl, colorStringToHsv, getPallette16, getPallette32 } from "../utils/colors";
 import { Modal } from "./modal";
-
-let pallette = [
-    '#000000', '#800000', '#008000', '#808000', '#000080', '#800080', '#008080', '#c0c0c0',
-    '#808080', '#ff0000', '#00ff00', '#ffff00', '#0000ff', '#ff00ff', '#00ffff', '#ffffff'
-];
-
-export const addColorToPallette = (color: string) => {
-    pallette.push(color);
-}
-
-export const removeColorFromPallette = (color: string) => {
-    pallette = pallette.filter((c) => c != color);
-}
 
 export const SelectColourModal: React.FunctionComponent<PropsWithoutRef<{
     show: boolean;
@@ -27,6 +14,8 @@ export const SelectColourModal: React.FunctionComponent<PropsWithoutRef<{
     const [s, setS] = useState(typeof initial == "undefined" ? 0 : colorStringToHsl(initial).s)
     const [l, setL] = useState(typeof initial == "undefined" ? 0 : colorStringToHsv(initial).v)
     const [hsvMode, setHsvMode] = useState(true);
+    const [rgbMode, setRgbMode] = useState(true);
+
     return <Modal
         show={show}
         title={!!title ? title : "Select Colour"}
@@ -37,137 +26,167 @@ export const SelectColourModal: React.FunctionComponent<PropsWithoutRef<{
         }}
         okLabel="Set Colour"
     >
-        <div style={{ minWidth: "400px", backgroundColor: color, height: "32px" }}>
+        <div className="color-picker">
+        <div style={{ backgroundColor: color }} className="selected-color">
             <span>{color}</span>
         </div>
-
-        <div className="color-slider">
-            <div>Red</div>
-            <input
-                type="range"
-                min="0"
-                max="255"
-                step="1"
-                onChange={(event) => {
-                    setColor(changeColorStringRgb(color, { r: parseInt(event.target.value) }))
-                    const hsl = colorStringToHsl(color);
-                    if (hsl.h != 0 && hsl.s != 0) {
+        <div className="color-swatches">
+            {getPallette32(1024).map((c) => <div 
+                onClick={() => {
+                    setColor(c);
+                    if(hsvMode) {
+                        const hsv = colorStringToHsv(c);
+                        setH(hsv.h);
+                        setS(hsv.s);
+                        setL(hsv.v);
+                    } else {
+                        const hsl = colorStringToHsl(c);
                         setH(hsl.h);
                         setS(hsl.s);
+                        setL(hsl.l);
                     }
-                    setL(hsl.l);
                 }}
-                value={colorStringToRgb(color).r}
-            />
+                className="color-swatch" 
+                style={{background: c, borderColor: c != color ? c : "white"}}
+            ></div>)}
         </div>
-        <div className="color-slider">
-            <div>Green</div>
-            <input
-                type="range"
-                min="0"
-                max="255"
-                step="1"
-                onChange={(event) => {
-                    setColor(changeColorStringRgb(color, { g: parseInt(event.target.value) }))
-                    const hsl = colorStringToHsl(color);
-                    if (hsl.h != 0 && hsl.s != 0) {
-                        setH(hsl.h);
-                        setS(hsl.s);
-                    }
-                    setL(hsl.l);
-                }}
-                value={colorStringToRgb(color).g}
-            />
         </div>
-        <div className="color-slider">
-            <div>Blue</div>
-            <input
-                type="range"
-                min="0"
-                max="255"
-                step="1"
-                onChange={(event) => {
-                    setColor(changeColorStringRgb(color, { b: parseInt(event.target.value) }))
-                    const hsl = colorStringToHsl(color);
-                    if (hsl.h != 0 && hsl.s != 0) {
-                        setH(hsl.h);
-                        setS(hsl.s);
-                    }
-                    setL(hsl.l);
-                }}
-                value={colorStringToRgb(color).b}
-            />
-        </div>
-        <br />
         <div className="color-mode-select">
             <button onClick={() => {
+                setRgbMode(true);
+            }} disabled={rgbMode}>RGB</button>
+            <button onClick={() => {
                 setHsvMode(true);
-                const hsv = hslTohsv({h,s,l});
+                setRgbMode(false);
+                const hsv = hslTohsv({ h, s, l });
                 setS(hsv.s);
                 setL(hsv.v);
 
-            }} disabled={hsvMode}>HSV</button>
+            }} disabled={hsvMode && !rgbMode}>HSV</button>
             <button onClick={() => {
-                setHsvMode(false)
-                const hsl = hsvToHsl({h,s,v:l});
+                setHsvMode(false);
+                setRgbMode(false);
+                const hsl = hsvToHsl({ h, s, v: l });
                 setS(hsl.s);
                 setL(hsl.l);
-            }} disabled={!hsvMode}>HSV</button>
+            }} disabled={!hsvMode && !rgbMode}>HSL</button>
         </div>
-        <div className="color-slider">
-            <div>Hue</div>
-            <input
-                type="range"
-                min="0"
-                max="1529"
-                step="1"
-                onChange={(event) => {
-                    setH(parseInt(event.target.value) / 1530)
-                    if (hsvMode) {
-                        setColor(changeColorStringHsv(color, { h, s, v: l }));
-                    } else {
-                        setColor(changeColorStringHsl(color, { h, s, l }));
-                    }
-                }}
-                value={h * 1530}
-            />
-        </div>
-        <div className="color-slider">
-            <div>Saturation</div>
-            <input
-                type="range"
-                min="0"
-                max="16777216"
-                step="1"
-                onChange={(event) => {
-                    setS(parseInt(event.target.value) / 16777216);
-                    if (hsvMode) {
-                        setColor(changeColorStringHsv(color, { h, s, v: l }));
-                    } else {
-                        setColor(changeColorStringHsl(color, { h, s, l }));
-                    }
-                }}
-                value={s * 16777216}
-            />
-        </div>
-        <div className="color-slider">
-            <div>{hsvMode ? 'Value' : 'Lightness'}</div>
-            <input
-                type="range"
-                min="0"
-                max="16777216"
-                step="1"
-                onChange={(event) => {
-                    setL(parseInt(event.target.value) / 16777216);
-                    if (hsvMode) {
-                        setColor(changeColorStringHsv(color, { h, s, v: l }));
-                    } else {
-                        setColor(changeColorStringHsl(color, { h, s, l }));
-                    }
-                }}
-                value={l * 16777216}
-            />
-        </div>
+
+        {rgbMode && <>
+            <div className="color-slider">
+                <div>Red</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    step="1"
+                    onChange={(event) => {
+                        setColor(changeColorStringRgb(color, { r: parseInt(event.target.value) }))
+                        const hsl = colorStringToHsl(color);
+                        if (hsl.h != 0 && hsl.s != 0) {
+                            setH(hsl.h);
+                            setS(hsl.s);
+                        }
+                        setL(hsl.l);
+                    }}
+                    value={colorStringToRgb(color).r}
+                />
+            </div>
+            <div className="color-slider">
+                <div>Green</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    step="1"
+                    onChange={(event) => {
+                        setColor(changeColorStringRgb(color, { g: parseInt(event.target.value) }))
+                        const hsl = colorStringToHsl(color);
+                        if (hsl.h != 0 && hsl.s != 0) {
+                            setH(hsl.h);
+                            setS(hsl.s);
+                        }
+                        setL(hsl.l);
+                    }}
+                    value={colorStringToRgb(color).g}
+                />
+            </div>
+            <div className="color-slider">
+                <div>Blue</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    step="1"
+                    onChange={(event) => {
+                        setColor(changeColorStringRgb(color, { b: parseInt(event.target.value) }))
+                        const hsl = colorStringToHsl(color);
+                        if (hsl.h != 0 && hsl.s != 0) {
+                            setH(hsl.h);
+                            setS(hsl.s);
+                        }
+                        setL(hsl.l);
+                    }}
+                    value={colorStringToRgb(color).b}
+                />
+            </div>
+        </>}
+        {!rgbMode && <>
+            <div className="color-slider">
+                <div>Hue</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1529"
+                    step="1"
+                    onChange={(event) => {
+                        setH(parseInt(event.target.value) / 1530)
+                        if (hsvMode) {
+                            setColor(changeColorStringHsv(color, { h, s, v: l }));
+                        } else {
+                            setColor(changeColorStringHsl(color, { h, s, l }));
+                        }
+                    }}
+                    value={h * 1530}
+                />
+            </div>
+            <div className="color-slider">
+                <div>Saturation</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="16777216"
+                    step="1"
+                    onChange={(event) => {
+                        setS(parseInt(event.target.value) / 16777216);
+                        if (hsvMode) {
+                            setColor(changeColorStringHsv(color, { h, s, v: l }));
+                        } else {
+                            setColor(changeColorStringHsl(color, { h, s, l }));
+                        }
+                    }}
+                    value={s * 16777216}
+                />
+            </div>
+            <div className="color-slider">
+                <div>{hsvMode ? 'Value' : 'Lightness'}</div>
+                <input
+                    type="range"
+                    min="0"
+                    max="16777216"
+                    step="1"
+                    onChange={(event) => {
+                        setL(parseInt(event.target.value) / 16777216);
+                        if (hsvMode) {
+                            setColor(changeColorStringHsv(color, { h, s, v: l }));
+                        } else {
+                            setColor(changeColorStringHsl(color, { h, s, l }));
+                        }
+                    }}
+                    value={l * 16777216}
+                />
+            </div>
+        </>}
 
 
     </Modal>
@@ -178,24 +197,37 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
     setPrimaryColor: (color: string) => void;
     secondaryColor: string;
     setSecondaryColor: (color: string) => void;
-}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, ...props }) => {
-    const [showModal, setShowModal] = useState(true);
+    pallette: string[];
+    setPallette: (pallette: string[]) => void;
+}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, pallette, setPallette, ...props }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return <>
         <div className="color-pallette">
             <div className="selectedColors">
-                <div className='selectedColor' style={{ background: primaryColor }}><span>{pallette.reduce((acc: number | null, color, index) => {
-                    if (color == primaryColor) {
-                        acc = index;
-                    }
-                    return acc;
-                }, null)}</span></div>
-                <div className='selectedColor' style={{ background: secondaryColor }}><span>{pallette.reduce((acc: number | null, color, index) => {
-                    if (color == secondaryColor) {
-                        acc = index;
-                    }
-                    return acc;
-                }, null)}</span></div>
+                <div className='selectedColor' style={{ background: primaryColor }}>
+                    <div className="color-index">{pallette.reduce((acc: number | null, color, index) => {
+                        if (color == primaryColor) {
+                            acc = index;
+                        }
+                        return acc;
+                    }, null)}</div>
+                    <div className="color-rgb">
+                        {primaryColor}
+                    </div>
+                </div>
+                <div className='selectedColor' style={{ background: secondaryColor }}>
+                    <div className="color-index">{pallette.reduce((acc: number | null, color, index) => {
+                        if (color == secondaryColor) {
+                            acc = index;
+                        }
+                        return acc;
+                    }, null)}</div>
+                    <div className="color-rgb">
+                        {secondaryColor}
+                    </div>
+                </div>
             </div>
             {pallette.map((col, index) => <div
                 key={index}
@@ -203,14 +235,69 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
                 className={(primaryColor == col ? 'primarySelected ' : '') + (secondaryColor == col ? 'secondarySelected' : '')}
                 onClick={() => setPrimaryColor(col)}
                 onContextMenu={() => setSecondaryColor(col)}
+                onDoubleClick={() => {
+                    setPrimaryColor(col);
+                    setShowModal(true);
+                }}
             ><span>{index}</span></div>)}
         </div>
+        <button
+            onClick={() => {
+                if(pallette[pallette.length-1] != "") {
+                    setPallette([...pallette, ""]);
+                } else {
+                    setPrimaryColor("");
+                    setShowModal(true);
+                }
+            }}
+        >Add Colour</button>
+        <button
+            onClick={() => {
+                if(primaryColor != "#000000") {
+                    setShowDeleteModal(true);
+                }
+            }}
+        >Remove Colour</button>
         <SelectColourModal
             title="Change Colour"
             show={showModal}
-            onChange={() => { }}
+            color={primaryColor}
+            onChange={(color) => {
+                if(!pallette.includes(color)) {
+                    setPallette(pallette.map( (c) => {
+                        if(c == primaryColor) {
+                            return color;
+                        } else {
+                            return c;
+                        }
+                    }))
+                }
+                setPrimaryColor(color);
+            }}
             onClose={() => setShowModal(false)}
         />
+        <Modal
+            title="Delete Colour?"
+            show={showDeleteModal}
+            onCancel={() => setShowDeleteModal(false)}
+            onOK={() => {
+                setPallette(pallette.filter( c => c != primaryColor));
+                setShowDeleteModal(false);
+            } }
+            >
+                <p>Are you sure you want to delete this colour from the pallette?</p>
+                <div style={{
+                    width: "100%",
+                    height: "32px",
+                    lineHeight: "32px",
+                    textAlign: "center",
+                    textShadow: "0px 0px 8px black",
+                    color: "white",
+                    backgroundColor: primaryColor
+                }}>
+                    {primaryColor}
+                </div>
+            </Modal>
 
     </>
 }

@@ -23,4 +23,5 @@ export const Modal: React.FunctionComponent<PropsWithChildren<{
             </div>
         </div>
     }
+    return null;
 }

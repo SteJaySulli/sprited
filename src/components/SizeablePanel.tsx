@@ -42,6 +42,7 @@ export const SizeablePanel: FunctionComponent<PropsWithChildren<{
         {children instanceof Array ? children.map((child: ReactNode, index: number) => (
             index < children.length - 1 ? <>
                 <div
+                    key={`panel-${index}`}
                     className="sizeable-panel-section"
                     style={layout == "vertical" ? {
                         height: `${sizes[index][0]}px`,
@@ -52,6 +53,7 @@ export const SizeablePanel: FunctionComponent<PropsWithChildren<{
                     {child}
                 </div>
                 <div
+                key={`handle-${index}`}
                     className="sizeable-panel-drag-bar"
                     onMouseDown={(event) => {
                         draggingHandle = setupFn(index);
@@ -63,7 +65,7 @@ export const SizeablePanel: FunctionComponent<PropsWithChildren<{
                         window.removeEventListener('mousemove', draggingHandle);
                     }}
                 />
-            </> : <div className="sizeable-panel-section">{child}</div>))
+            </> : <div key={`panel-${index}`} className="sizeable-panel-section">{child}</div>))
             : <div className="sizeable-panel-section">{children}</div>}
     </div>
 }

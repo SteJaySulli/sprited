@@ -155,23 +155,55 @@ export const hslTohsv = (hsl: hsl) => {
 export const hsvToHsl = (hsv: hsv) => {
     const h = hsv.h;
     const l = hsv.v * (1 - hsv.s / 2);
-    const s = l == 0 || l == 1 ? 0 :  (hsv.v - l) / (l < 1 - l ? l : 1 - l);
-    return {h,s,l};
+    const s = l == 0 || l == 1 ? 0 : (hsv.v - l) / (l < 1 - l ? l : 1 - l);
+    return { h, s, l };
 }
 
-export const hsvToColorString = (hsv:hsv):string => {
+export const hsvToColorString = (hsv: hsv): string => {
     return hslToColorString(hsvToHsl(hsv));
 }
 
-export const colorStringToHsv = (color:string):hsv => {
+export const colorStringToHsv = (color: string): hsv => {
     return hslTohsv(colorStringToHsl(color));
 }
 
-export const changeColorStringHsv = (color: string, parameter: {h?: number, s?: number, v?:number}) => {
+export const changeColorStringHsv = (color: string, parameter: { h?: number, s?: number, v?: number }) => {
     const keys = Object.keys(parameter);
     return hsvToColorString(keys.reduce((acc: hsv, key: "h" | "s" | "v") => {
         acc[key] = parameter[key];
         return acc;
     }, colorStringToHsv(color)));
-    
+
 }
+
+export const generatePallette = (hues: number, variations?: undefined | number) => {
+    let pallette = [];
+    const hc = variations / (variations + 2);
+    const lc = 1 - hc;
+    const tc = hc - lc;
+    let pureColors = false;
+    // Start with greyscale
+    for (let l = 0; l < 1; l += 1 / (hues - 1)) {
+        pallette.push(hslToColorString({ h: 0, s: 0, l }));
+    }
+    // pallette.push(hslToColorString({ h: 0, s: 0, l: 1 }));
+    for (let h = 0; h < 1; h += 1 / hues) {
+        pallette.push(hslToColorString({ h, s: 1, l: 0.5 }));
+    }
+    if(typeof variations == "undefined" || variations < 1) {
+        return pallette;
+    }
+    for (let l = lc; l <= hc; l += tc / variations) {
+        // for (let s = lc; s <= hc; s += tc / 2) {
+        for (let h = 0; h < 1; h += 1 / hues) {
+            pallette.push(hslToColorString({ h, s: 0.5, l }));
+            // }
+        }
+    }
+    return pallette;
+}
+
+export const getPallette8 = (colors: number) => generatePallette(8, (colors / 8) - 2);
+export const getPallette16 = (colors: number) => generatePallette(16, (colors / 16) - 2);
+export const getPallette32 = (colors: number) => generatePallette(32, (colors / 32) - 2);
+
