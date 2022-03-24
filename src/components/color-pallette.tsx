@@ -27,29 +27,29 @@ export const SelectColourModal: React.FunctionComponent<PropsWithoutRef<{
         okLabel="Set Colour"
     >
         <div className="color-picker">
-        <div style={{ backgroundColor: color }} className="selected-color">
-            <span>{color}</span>
-        </div>
-        <div className="color-swatches">
-            {getPallette32(1024).map((c) => <div 
-                onClick={() => {
-                    setColor(c);
-                    if(hsvMode) {
-                        const hsv = colorStringToHsv(c);
-                        setH(hsv.h);
-                        setS(hsv.s);
-                        setL(hsv.v);
-                    } else {
-                        const hsl = colorStringToHsl(c);
-                        setH(hsl.h);
-                        setS(hsl.s);
-                        setL(hsl.l);
-                    }
-                }}
-                className="color-swatch" 
-                style={{background: c, borderColor: c != color ? c : "white"}}
-            ></div>)}
-        </div>
+            <div style={{ backgroundColor: color }} className="selected-color">
+                <span>{color}</span>
+            </div>
+            <div className="color-swatches">
+                {getPallette32(1024).map((c) => <div
+                    onClick={() => {
+                        setColor(c);
+                        if (hsvMode) {
+                            const hsv = colorStringToHsv(c);
+                            setH(hsv.h);
+                            setS(hsv.s);
+                            setL(hsv.v);
+                        } else {
+                            const hsl = colorStringToHsl(c);
+                            setH(hsl.h);
+                            setS(hsl.s);
+                            setL(hsl.l);
+                        }
+                    }}
+                    className="color-swatch"
+                    style={{ background: c, borderColor: c != color ? c : "white" }}
+                ></div>)}
+            </div>
         </div>
         <div className="color-mode-select">
             <button onClick={() => {
@@ -200,8 +200,8 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
     pallette: string[];
     setPallette: (pallette: string[]) => void;
     opacity: number;
-    setOpacity: (opacity:number) => void;
-}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, pallette, setPallette, opacity, setOpacity,...props }) => {
+    setOpacity: (opacity: number) => void;
+}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, pallette, setPallette, opacity, setOpacity, ...props }) => {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -231,7 +231,7 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
                     </div>
                 </div>
             </div>
-            <input type="range" min={0} max={1} step={1/256} style={{width: "100%"}} value={opacity} onChange={(event) => setOpacity(parseFloat(event.target.value))} />
+            <input type="range" min={0} max={1} step={1 / 256} style={{ width: "100%" }} value={opacity} onChange={(event) => setOpacity(parseFloat(event.target.value))} />
             {pallette.map((col, index) => <div
                 key={index}
                 style={{ background: col + decToHexByte(opacity * 255) }}
@@ -246,19 +246,22 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
         </div>
         <button
             onClick={() => {
-                if(pallette[pallette.length-1] != "") {
+                if (!pallette.includes("")) {
                     setPallette([...pallette, ""]);
-                } else {
-                    setPrimaryColor("");
-                    setShowModal(true);
                 }
+                setPrimaryColor("");
+                setShowModal(true);
+
             }}
         >Add Colour</button>
         <button
             onClick={() => {
-                if(primaryColor != "#000000") {
+                if(primaryColor == "") {
+                    setPallette(pallette.filter(c => c != primaryColor));
+                } else if (primaryColor != "#000000") {
                     setShowDeleteModal(true);
-                }
+                }  
+                
             }}
         >Remove Colour</button>
         <SelectColourModal
@@ -266,9 +269,9 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
             show={showModal}
             color={primaryColor}
             onChange={(color) => {
-                if(!pallette.includes(color)) {
-                    setPallette(pallette.map( (c) => {
-                        if(c == primaryColor) {
+                if (!pallette.includes(color)) {
+                    setPallette(pallette.map((c) => {
+                        if (c == primaryColor) {
                             return color;
                         } else {
                             return c;
@@ -284,23 +287,23 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
             show={showDeleteModal}
             onCancel={() => setShowDeleteModal(false)}
             onOK={() => {
-                setPallette(pallette.filter( c => c != primaryColor));
+                setPallette(pallette.filter(c => c != primaryColor));
                 setShowDeleteModal(false);
-            } }
-            >
-                <p>Are you sure you want to delete this colour from the pallette?</p>
-                <div style={{
-                    width: "100%",
-                    height: "32px",
-                    lineHeight: "32px",
-                    textAlign: "center",
-                    textShadow: "0px 0px 8px black",
-                    color: "white",
-                    backgroundColor: primaryColor
-                }}>
-                    {primaryColor}
-                </div>
-            </Modal>
+            }}
+        >
+            <p>Are you sure you want to delete this colour from the pallette?</p>
+            <div style={{
+                width: "100%",
+                height: "32px",
+                lineHeight: "32px",
+                textAlign: "center",
+                textShadow: "0px 0px 8px black",
+                color: "white",
+                backgroundColor: primaryColor
+            }}>
+                {primaryColor}
+            </div>
+        </Modal>
 
     </>
 }
