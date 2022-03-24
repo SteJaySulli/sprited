@@ -22,8 +22,8 @@
         }
         & > .sizeable-panel-drag-bar {
             cursor: ns-resize;
-            height: 8px;
-            min-height: 8px;
+            height: 4px;
+            min-height: 4px;
             width: 100%;
             background: linear-gradient(to bottom, #ccc, #fff, #ddd);        
         }
@@ -41,8 +41,8 @@
         & > .sizeable-panel-drag-bar {
             cursor: ew-resize;
             height: 100%;
-            min-width:8px;
-            width: 8px;
+            min-width:4px;
+            width: 4px;
             background: linear-gradient(to right, #ccc, #fff, #ddd);        
         }
     }

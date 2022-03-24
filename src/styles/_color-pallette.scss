@@ -5,10 +5,10 @@
   overflow-y: auto;
   box-sizing: border-box;
   & > div {
-    border: 2px solid black;
-    width: 16px;
+    border: 1px solid black;
+    width: 18px;
     // width: 100% / 16.0;
-    height: 16px;
+    height: 18px;
     line-height: 18px;
     font-size: 8px;
     text-align: center;
@@ -18,7 +18,9 @@
     & > span {
       display: none;
       color: white;
-      text-shadow: 0px 0px 8px black;
+      text-shadow: -1px -1px 2px black, 1px 1px 2px black, -1px 1px 2px black, 1px -1px 2px black;
+      padding-left: 2px;
+      padding-right: 2px;
     }
     &:hover {
       outline: 1px solid white;
@@ -27,10 +29,20 @@
       }
     }
     &.primarySelected {
-      border-left: 2px solid white;
+      text-align: left;
+      span {
+        display:block;
+
+      }
     }
     &.secondarySelected {
-      border-right: 2px solid white;
+      text-align: right;
+      span {
+        display: block;
+      }
+    }
+    &.primarySelected.secondarySelected {
+      text-align: center;
     }
   }
   & > div.selectedColors {
@@ -41,9 +53,9 @@
     align-items: stretch;
     height: 20px;
     div.selectedColor {
-      width: 40%;
+      width: 50%;
       height: 16px;
-      border: 2px solid white;
+      border: 1px solid white;
       margin-bottom: 4px;
       display: flex;
       flex-direction: row;
@@ -51,21 +63,25 @@
       align-items: center;
       & > .color-index {
         color: white;
-        text-shadow: 0px 0px 8px black;
+        text-shadow: -1px -1px 2px black, 1px 1px 2px black, -1px 1px 2px black, 1px -1px 2px black;
         // mix-blend-mode: difference;
         font-size: 12px;
+        padding-left: 4px;
+        padding-right: 4px;
       }
       & > .color-rgb {
         color: white;
-        text-shadow: 0px 0px 8px black;
+        text-shadow: -1px -1px 2px black, 1px 1px 2px black, -1px 1px 2px black, 1px -1px 2px black;
         // mix-blend-mode: difference;
         font-size: 10px;
+        padding-left: 4px;
+        padding-right: 4px;
       }
 
       & > span {
         display: block;
         color: white;
-        text-shadow: 0px 0px 8px black;
+        text-shadow: -1px -1px 2px black, 1px 1px 2px black, -1px 1px 2px black, 1px -1px 2px black;
         font-size: 16px;
         line-height: 36px;
       }
@@ -91,6 +107,10 @@
     &:disabled {
       background-color: black;
       color: white;
+      &:hover {
+        text-shadow: -1px -1px 2px white, 1px 1px 2px white, -1px 1px 2px white, 1px -1px 2px white;
+        color: black;
+      }
     }
   }
 }

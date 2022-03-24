@@ -1,5 +1,5 @@
 import React, { PropsWithoutRef, useState } from "react";
-import { colorStringToRgb, changeColorStringHsl, changeColorStringRgb, colorStringToHsl, changeColorStringHsv, hslTohsv, hsvToHsl, colorStringToHsv, getPallette16, getPallette32 } from "../utils/colors";
+import { colorStringToRgb, changeColorStringHsl, changeColorStringRgb, colorStringToHsl, changeColorStringHsv, hslTohsv, hsvToHsl, colorStringToHsv, getPallette16, getPallette32, decToHexByte } from "../utils/colors";
 import { Modal } from "./modal";
 
 export const SelectColourModal: React.FunctionComponent<PropsWithoutRef<{
@@ -199,14 +199,16 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
     setSecondaryColor: (color: string) => void;
     pallette: string[];
     setPallette: (pallette: string[]) => void;
-}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, pallette, setPallette, ...props }) => {
+    opacity: number;
+    setOpacity: (opacity:number) => void;
+}>> = ({ primaryColor, secondaryColor, setPrimaryColor, setSecondaryColor, pallette, setPallette, opacity, setOpacity,...props }) => {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return <>
         <div className="color-pallette">
             <div className="selectedColors">
-                <div className='selectedColor' style={{ background: primaryColor }}>
+                <div className='selectedColor' style={{ background: primaryColor + decToHexByte(opacity * 255) }}>
                     <div className="color-index">{pallette.reduce((acc: number | null, color, index) => {
                         if (color == primaryColor) {
                             acc = index;
@@ -217,7 +219,7 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
                         {primaryColor}
                     </div>
                 </div>
-                <div className='selectedColor' style={{ background: secondaryColor }}>
+                <div className='selectedColor' style={{ background: secondaryColor + decToHexByte(opacity * 255) }}>
                     <div className="color-index">{pallette.reduce((acc: number | null, color, index) => {
                         if (color == secondaryColor) {
                             acc = index;
@@ -229,9 +231,10 @@ export const ColorPallette: React.FunctionComponent<PropsWithoutRef<{
                     </div>
                 </div>
             </div>
+            <input type="range" min={0} max={1} step={1/256} style={{width: "100%"}} value={opacity} onChange={(event) => setOpacity(parseFloat(event.target.value))} />
             {pallette.map((col, index) => <div
                 key={index}
-                style={{ background: col }}
+                style={{ background: col + decToHexByte(opacity * 255) }}
                 className={(primaryColor == col ? 'primarySelected ' : '') + (secondaryColor == col ? 'secondarySelected' : '')}
                 onClick={() => setPrimaryColor(col)}
                 onContextMenu={() => setSecondaryColor(col)}

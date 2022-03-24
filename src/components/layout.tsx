@@ -11,6 +11,7 @@ export const Layout: React.FunctionComponent<{
 }> = ({ test }) => {
     const [primaryColor, setPrimaryColor] = useState("#000000");
     const [secondaryColor, setSecondaryColor] = useState("#ffffff");
+    const [opacity, setOpacity] = useState(1);
     const [pallette, setPallette] = useState(getPallette16(32));
 
     return <div className="layout">
@@ -33,15 +34,7 @@ export const Layout: React.FunctionComponent<{
                     {/* {range(100).map((index: number) => <button key={index}>Button</button>)} */}
                     TOOLS
                 </div>
-                <ColorPallette 
-                    primaryColor={primaryColor}
-                    secondaryColor={secondaryColor}
-                    setPrimaryColor={setPrimaryColor}
-                    setSecondaryColor={setSecondaryColor}
-                    pallette={pallette}
-                    setPallette={setPallette}
-                />
-                <div className="selects">
+                {/* <div className="selects">
                     <div className="select">
                         <select>
                             <option>State</option>
@@ -56,7 +49,17 @@ export const Layout: React.FunctionComponent<{
                         <button>+</button>
                         <button>-</button>
                     </div>
-                </div>
+                </div> */}
+                <ColorPallette 
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
+                    setPrimaryColor={setPrimaryColor}
+                    setSecondaryColor={setSecondaryColor}
+                    pallette={pallette}
+                    setPallette={setPallette}
+                    opacity={opacity}
+                    setOpacity={setOpacity}
+                />
 
             </SizeablePanel>
             <div className="drawing-area">
